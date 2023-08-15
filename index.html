@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elo Rating Calculator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  .calculator {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 80%px;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  input[type="number"],
+  select {
+    width: 98%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    margin-bottom: 10px;
+  }
+
+  button {
+    background-color: #007BFF;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  button:last-child {
+    margin-right: 0;
+  }
+
+  .calculator {
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 25px;
+  }
+
+  label {
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  input[type="number"],
+  select {
+    font-size: 16px;
+  }
+
+  button {
+    font-size: 16px;
+    padding: 5px 10px;
+  }
+
+  #result {
+    margin-top: 25px;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  body {
+    background-color: #f4f4f4;
+  }
+
+  .calculator {
+    width: 80%;
+    max-width: 500px;
+    margin: 0 auto;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  label {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  input[type="number"],
+  select {
+    font-size: 18px;
+    padding: 10px;
+  }
+
+  button {
+    font-size: 18px;
+    padding: 6px 12px;
+  }
+
+  #result {
+    margin-top: 20px;
+    font-size: 20px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="calculator">
+  <h2>Elo Rating Calculator</h2>
+  <label for="ratingA">Player A Rating</label>
+  <input type="number" id="ratingA" placeholder="Enter rating for Player A">
+  <label for="ratingB">Player B Rating</label>
+  <input type="number" id="ratingB" placeholder="Enter rating for Player B">
+  <label for="resultSelect">Select</label>
+  <select id="resultSelect">
+    <option value="a">Player A Wins</option>
+    <option value="b">Player B Wins</option>
+    <option value="draw">Draw</option>
+  </select>
+  <button id="calculateButton">Calculate</button>
+  <button id="clearButton">Clear All</button>
+  <div id="result"></div>
+</div>
+
+<script>
+  const calculateButton = document.getElementById("calculateButton");
+  const clearButton = document.getElementById("clearButton");
+  
+  calculateButton.addEventListener("click", calculateElo);
+  clearButton.addEventListener("click", clearInputs);
+
+  function calculateElo() {
+    const ratingA = parseFloat(document.getElementById("ratingA").value);
+    const ratingB = parseFloat(document.getElementById("ratingB").value);
+    const resultSelect = document.getElementById("resultSelect");
+    const resultValue = resultSelect.options[resultSelect.selectedIndex].value;
+
+    if (isNaN(ratingA) || isNaN(ratingB)) {
+      document.getElementById("result").innerHTML = "Please enter valid ratings for both players.";
+      return;
+    }
+
+    const expectedProbabilityA = 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
+    const expectedProbabilityB = 1 - expectedProbabilityA;
+
+    let scoreA, scoreB;
+
+    if (resultValue === "a") {
+      scoreA = 1;
+      scoreB = 0;
+    } else if (resultValue === "b") {
+      scoreA = 0;
+      scoreB = 1;
+    } else {
+      scoreA = 0.5;
+      scoreB = 0.5;
+    }
+
+    const newRatingA = Math.round(ratingA + 32 * (scoreA - expectedProbabilityA));
+    const newRatingB = Math.round(ratingB + 32 * (scoreB - expectedProbabilityB));
+
+    document.getElementById("result").innerHTML = `
+      <p>Player A's new rating: ${newRatingA}</p>
+      <p>Player B's new rating: ${newRatingB}</p>
+    `;
+  }
+
+  function clearInputs() {
+    document.getElementById("ratingA").value = "";
+    document.getElementById("ratingB").value = "";
+    document.getElementById("resultSelect").selectedIndex = 0;
+    document.getElementById("result").innerHTML = "";
+  }
+</script>
+</body>
+</html>
